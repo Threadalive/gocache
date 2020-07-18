@@ -29,7 +29,7 @@ type Group struct {
 
 func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 	if getter == nil {
-		panic("nil gettet")
+		panic("nil getter")
 	}
 	mu.Lock()
 	defer mu.Unlock()
