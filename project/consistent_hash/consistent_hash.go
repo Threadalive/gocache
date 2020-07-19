@@ -12,7 +12,7 @@ type Hash func(data []byte) uint32
 type Map struct {
 	hash    Hash
 	replica int
-	//存节点keys的哈希值（排序好的）
+	//存节点keys的哈希值（排序好的），即哈希环
 	keys []int
 	//存储虚拟节点与其对应的真实节点名称
 	hashMap map[int]string
@@ -40,4 +40,23 @@ func (m *Map) AddNodes(keys ...string) {
 		}
 	}
 	sort.Ints(m.keys)
+}
+
+//选取节点
+func (m *Map) Get(key string) string {
+	if len(m.keys) == 0 {
+		return ""
+	}
+	//所查询key对应的hash值
+	hash := int(m.hash([]byte(key)))
+	//二分查找
+	index := sort.Search(len(m.keys), func(i int) bool {
+		if m.keys[i] >= hash {
+			return true
+		} else {
+			return false
+		}
+	})
+	//环状，索引取余
+	return m.hashMap[m.keys[index%len(m.keys)]]
 }
